@@ -46,5 +46,52 @@ namespace DataLoader
                 greeter.PrintGreeting("hello, world");
             }
         }
+
+        public static void AddTweetToGraph(Message msg, Source src)
+        {
+            using (var context = new HelloWorldExample("bolt://localhost:7687", "neo4j", "1234"))
+            {
+                context.AddTweet(msg, src);
+            }
+        }
+
+        private void AddTweet(Message msg, Source src)
+        {
+            using (var session = _driver.Session())
+            {
+                var tweet = session.WriteTransaction(tx =>
+                {
+                    var result = tx.Run("MERGE (s:SOURCE {Name: $src.Name}) " +
+                                        "CREATE (m:MESSAGE:RAW {ID:$msg.ID, Text:$msg.Text}) " +
+                                        "SET m.Loaded = $timestamp" +
+                                        "CREATE (m)-[r:FROM]->(s) " +
+                                        @"RETURN 'ID: ' + m.ID + '\n' + " +
+                                        @"'Text: ' + m.Text + '\n' + " +
+                                        @"'Loaded: ' +  m.loaded + ' \n ' + 'from node ' + id(m)",
+                        new { msg, src, timestamp = DateTime.Now.Ticks });
+                    return result.Single()[0].As<string>();
+                });
+               // MessageBox.Show(tweet);
+            }
+        }
+
+        public static void AddTweetRelation(Message msg1, Message msg2)
+        {
+            using (var context = new HelloWorldExample("bolt://localhost:7687", "neo4j", "1234"))
+            {
+                using (var session = context._driver.Session())
+                {
+                    session.WriteTransaction(tx =>
+                    {
+                        tx.Run("MATCH (m1:MESSAGE {ID: $msg1.ID, Text: $msg1.Text}) " +
+                            "CREATE (m2:MESSAGE:RAW {ID:$msg2.ID, Text: $msg2.Text, Loaded: $timestamp}) " +
+                            "CREATE (m1)-[r:PRECEDES]->(m2) " +
+                            "RETURN m1,m2,r" ,
+                            new { msg1, msg2, timestamp = DateTime.Now.Ticks });
+                    });
+                }
+            }
+        }
+
     }
 }

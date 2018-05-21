@@ -16,6 +16,12 @@ namespace DataLoader
         public static async Task SingleStatusQueryAsync(TwitterContext twitterCtx)
         {
             _twitterCtx = twitterCtx;
+
+            Source twitter = new Source
+            {
+                Name = "Twitter"
+            };
+
             // ulong tweetID = 806571633754284032;
 
             //Random gen = new Random();
@@ -47,6 +53,13 @@ namespace DataLoader
                                 t.FullText.StripHTMLandURLs()), "Tweet status"
                                 , MessageBoxButtons.OK, MessageBoxIcon.Asterisk, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
 
+                //ADD to graph
+                var message = new Message()
+                {
+                    ID = (long)t.StatusID,
+                    Text = t.FullText.StripHTMLandURLs()
+                };
+                HelloWorldExample.AddTweetToGraph(message,twitter);
                 await GetTweetHistoryUpwardsAsync(t);
 
             }   
@@ -72,6 +85,20 @@ namespace DataLoader
                             searchResponse.User.ScreenNameResponse,
                             searchResponse.FullText.StripHTMLandURLs()), "Tweet status", 
                             MessageBoxButtons.OK, MessageBoxIcon.Asterisk, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+
+                var msg1 = new Message()
+                {
+                    ID = (long)status.StatusID,
+                    Text = status.FullText,
+                };
+
+                var msg2 = new Message()
+                {
+                    ID = (long)searchResponse.StatusID,
+                    Text = searchResponse.FullText,
+                };
+
+                HelloWorldExample.AddTweetRelation(msg1, msg2);
 
                 await GetTweetHistoryUpwardsAsync(searchResponse);
             }

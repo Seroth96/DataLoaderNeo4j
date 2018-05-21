@@ -8,7 +8,7 @@ namespace DataLoader
 {
     public class Message
     {
-        public ulong ID { get; set; }
+        public long ID { get; set; }
         public string Text { get; set; }
         public DateTime Loaded { get; set; }
         public DateTime Processed { get; set; }
@@ -16,7 +16,7 @@ namespace DataLoader
 
     public class Keyword
     {
-        public ulong ID { get; set; }
+        public long ID { get; set; }
         public string value { get; set; }
         public string type { get; set; }
     }
