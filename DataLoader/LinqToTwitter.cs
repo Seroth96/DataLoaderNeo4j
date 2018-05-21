@@ -57,7 +57,9 @@ namespace DataLoader
                 var message = new Message()
                 {
                     ID = (long)t.StatusID,
-                    Text = t.FullText.StripHTMLandURLs()
+                    Text = t.FullText.StripHTMLandURLs(),
+                    RetweetCount = t.RetweetCount,
+                    FavoriteCount = t.FavoriteCount ?? 0
                 };
                 HelloWorldExample.AddTweetToGraph(message,twitter);
                 await GetTweetHistoryUpwardsAsync(t);
@@ -89,13 +91,17 @@ namespace DataLoader
                 var msg1 = new Message()
                 {
                     ID = (long)status.StatusID,
-                    Text = status.FullText,
+                    Text = status.FullText.StripHTMLandURLs(),
+                    RetweetCount = status.RetweetCount,
+                    FavoriteCount = status.FavoriteCount ?? 0
                 };
 
                 var msg2 = new Message()
                 {
                     ID = (long)searchResponse.StatusID,
-                    Text = searchResponse.FullText,
+                    Text = searchResponse.FullText.StripHTMLandURLs(),
+                    RetweetCount = searchResponse.RetweetCount,
+                    FavoriteCount = searchResponse.FavoriteCount ?? 0
                 };
 
                 HelloWorldExample.AddTweetRelation(msg1, msg2);

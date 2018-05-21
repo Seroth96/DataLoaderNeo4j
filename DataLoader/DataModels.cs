@@ -10,6 +10,8 @@ namespace DataLoader
     {
         public long ID { get; set; }
         public string Text { get; set; }
+        public int FavoriteCount { get; set; }
+        public int RetweetCount { get; set; }
         public DateTime Loaded { get; set; }
         public DateTime Processed { get; set; }
     }

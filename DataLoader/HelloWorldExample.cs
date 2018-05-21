@@ -61,12 +61,13 @@ namespace DataLoader
             {
                 var tweet = session.WriteTransaction(tx =>
                 {
-                    var result = tx.Run("MERGE (s:SOURCE {Name: $src.Name}) " +
-                                        "CREATE (m:MESSAGE:RAW {ID:$msg.ID, Text:$msg.Text}) " +
-                                        "SET m.Loaded = $timestamp" +
+                    var result = tx.Run("MERGE (s:SOURCE {name: $src.Name}) " +
+                                        "CREATE (m:MESSAGE:RAW {id:$msg.ID, text:$msg.Text, favoriteCount:$msg.FavoriteCount, retweetCount:$msg.RetweetCount, loaded:$timestamp}) " +
                                         "CREATE (m)-[r:FROM]->(s) " +
-                                        @"RETURN 'ID: ' + m.ID + '\n' + " +
-                                        @"'Text: ' + m.Text + '\n' + " +
+                                        @"RETURN 'ID: ' + m.id + '\n ' + " +
+                                        @"'Text: ' + m.text + '\n ' + " +
+                                        @"'Fovorite: ' + m.favoriteCount + '\n ' + " +
+                                        @"'Retweets: ' + m.retweetCount + '\n ' + " +
                                         @"'Loaded: ' +  m.loaded + ' \n ' + 'from node ' + id(m)",
                         new { msg, src, timestamp = DateTime.Now.Ticks });
                     return result.Single()[0].As<string>();
@@ -83,8 +84,8 @@ namespace DataLoader
                 {
                     session.WriteTransaction(tx =>
                     {
-                        tx.Run("MATCH (m1:MESSAGE {ID: $msg1.ID, Text: $msg1.Text}) " +
-                            "CREATE (m2:MESSAGE:RAW {ID:$msg2.ID, Text: $msg2.Text, Loaded: $timestamp}) " +
+                        tx.Run("MATCH (m1:MESSAGE {id: $msg1.ID}) " +
+                            "CREATE (m2:MESSAGE:RAW {id:$msg2.ID, text:$msg2.Text, favoriteCount:$msg2.FavoriteCount, retweetCount:$msg2.RetweetCount, loaded:$timestamp}) " +
                             "CREATE (m1)-[r:PRECEDES]->(m2) " +
                             "RETURN m1,m2,r" ,
                             new { msg1, msg2, timestamp = DateTime.Now.Ticks });

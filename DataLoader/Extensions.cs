@@ -11,9 +11,9 @@ namespace DataLoader
     {
         public static string StripHTMLandURLs(this string input)
         {
-            var replaceurl = Regex.Replace(input, @"(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?", " !URL! ");
+           // var replaceurl = Regex.Replace(input, @"(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?", String.Empty);
 
-            var removedTags = Regex.Replace(replaceurl, "&lt;[^&]*&gt;", String.Empty);
+            var removedTags = Regex.Replace(input, "&lt;[^&]*&gt;", String.Empty);
 
             
             var removedSpecialChars = Regex.Replace(removedTags, @"&nbps;|&lt;|&gt;|&amp;", String.Empty);
