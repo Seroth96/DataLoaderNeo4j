@@ -12,15 +12,17 @@ namespace DataLoader
     {
 
         private static TwitterContext _twitterCtx { get; set; }
+        private static Source twitter {
+            get
+            {
+                return new Source { Name = "Twitter" };
+            }
+        }
 
         public static async Task SingleStatusQueryAsync(TwitterContext twitterCtx)
         {
             _twitterCtx = twitterCtx;
 
-            Source twitter = new Source
-            {
-                Name = "Twitter"
-            };
 
             // ulong tweetID = 806571633754284032;
 
@@ -37,7 +39,7 @@ namespace DataLoader
                        search.ResultType == ResultType.Mixed &&
                        search.TweetMode == TweetMode.Extended &&
                        search.SearchLanguage == "en" &&
-                       search.Count == 10 &&
+                       search.Count == 25 &&
                        search.Query == "\"a\""// &&
              //          search.Until == randomDate
                  select search)
@@ -104,7 +106,7 @@ namespace DataLoader
                     FavoriteCount = searchResponse.FavoriteCount ?? 0
                 };
 
-                HelloWorldExample.AddTweetRelation(msg1, msg2);
+                HelloWorldExample.AddTweetRelation(msg1, msg2, twitter);
 
                 await GetTweetHistoryUpwardsAsync(searchResponse);
             }
